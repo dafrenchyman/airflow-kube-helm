@@ -8,8 +8,6 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  nodeSelector:
-    airflow: true
   replicas: 1
   strategy:
     # Smooth rolling update of the Web UI
@@ -33,6 +31,8 @@ spec:
       securityContext:
         fsGroup: 1000
       restartPolicy: Always
+      nodeSelector:
+        airflow: "true"
       initContainers:
       - name: "init-airflow"
         image: {{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}

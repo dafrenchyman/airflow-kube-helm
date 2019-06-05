@@ -8,8 +8,6 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  nodeSelector:
-    airflow: true
   replicas: 1
   serviceAccountName: {{ template "airflow.fullname" . }}-cluster-access
   strategy:
@@ -29,6 +27,8 @@ spec:
       securityContext:
         fsGroup: 1000
       restartPolicy: Always
+      nodeSelector:
+        airflow: "true"
       containers:
       {{- if not .Values.airflow.dags.persistence.enabled }}
       - name: git-sync
