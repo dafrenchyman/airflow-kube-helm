@@ -12,6 +12,8 @@ spec:
       labels:
         role: nfs-server
     spec:
+      nodeSelector:
+        airflow: "true"
       containers:
       - name: nfs-server
         image: k8s.gcr.io/volume-nfs:0.8

@@ -41,7 +41,10 @@ uninstall_airflow() {
   kubectl --namespace=${NAMESPACE} delete secret invoice-processing-ocr-compress
 
   # Remove the logging service
-  ./nfs/delete_nfs.sh ${NAMESPACE}
+  kubectl delete service nfs-server
+  kubectl delete deployment nfs-server
+
+  #./nfs/delete_nfs.sh ${NAMESPACE}
 
   #kubectl delete -n ${NAMESPACE} deployment nfs-server
   #kubectl --namespace ${NAMESPACE} delete service nfs-server

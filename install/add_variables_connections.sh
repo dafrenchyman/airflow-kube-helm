@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAMESPACE=default
-SHA=48ea7f69ca8db88d88c5e965415c3634c0625a92
+SHA=89575ac268b138b2b878b453683c35e78a6be600
 
 # Get Airflow web pod to set variables
 export AIRFLOW_POD=`kubectl --namespace ${NAMESPACE} get pods | grep airflow-web -m 1| cut -f1 -d' '`

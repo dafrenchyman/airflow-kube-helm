@@ -122,16 +122,16 @@ install_airflow () {
   # Google credential secrets as file
   kubectl --namespace ${NAMESPACE} \
     create secret generic invoice-processing-env \
-    --from-env-file=./secrets.env
+    --from-env-file=./install/secrets.env
   kubectl --namespace ${NAMESPACE} \
     create secret generic invoice-processing-google-app-cred \
-    --from-file=./google_app_creds.json
+    --from-file=./install/google_app_creds.json
   kubectl --namespace ${NAMESPACE} \
     create secret generic invoice-processing-invoice-processing-ocr-creds \
-    --from-file=./invoice-processing-ocr-creds.json
+    --from-file=./install/invoice-processing-ocr-creds.json
   kubectl --namespace ${NAMESPACE} \
     create secret generic invoice-processing-ocr-compress \
-    --from-file=./ocr-compress.json
+    --from-file=./install/ocr-compress.json
 
   # Google credential secrets for pod ImagePullSecrets (still need to figure this out)
   DOCKER_REG="FALSE"
@@ -165,7 +165,7 @@ install_airflow () {
   echo "Airflow is now up and running on: http://localhost:8080/"
 }
 
-build_docker
+#build_docker
 setup
 install_airflow
 
