@@ -154,6 +154,7 @@ data:
     git_sync_init_container_name = git-sync-clone
 
     [kubernetes_node_selectors]
+    cloud.google.com/gke-nodepool = default-pool
     # the key-value pairs to be given to worker pods.
     # the worker pods will be scheduled to the nodes of the specified key-value pairs.
     # should be supplied in the format: key = value
