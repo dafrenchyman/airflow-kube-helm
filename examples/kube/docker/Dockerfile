@@ -66,7 +66,9 @@ RUN set -ex \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
     && pip install 'slackclient>=1.0.0,<2.0.0' \
-    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh,slack${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
+    && pip install 'google-cloud-core>=1.0,<2.0' \
+    && pip install 'google-cloud-storage>=1.16,<2.0' \
+    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
     && pip install 'redis==3.2.1' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     && apt-get purge --auto-remove -yqq $buildDeps \

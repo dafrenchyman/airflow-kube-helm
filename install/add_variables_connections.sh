@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAMESPACE=default
-SHA=97cb6b43f95bd7c0805a143f37ab89863844ca27
+SHA=79b67eec0ab157dd29aaa598d7d28afbef344504
 
 # Get Airflow web pod to set variables
 export AIRFLOW_POD=`kubectl --namespace ${NAMESPACE} get pods | grep airflow-web -m 1| cut -f1 -d' '`
@@ -29,6 +29,7 @@ add_variables invoice_processing_amount_max_obs_to_save 900
 add_variables invoice_processing_amount_vhosts "[\\\"allied\\\"]"
 
 # Coldstart
+add_variables invoice_processing_coldstart_always_train	True
 add_variables invoice_processing_coldstart_counter 0
 add_variables invoice_processing_coldstart_sha ${SHA}
 add_variables invoice_processing_coldstart_vhosts "[\\\"allied\\\"]"

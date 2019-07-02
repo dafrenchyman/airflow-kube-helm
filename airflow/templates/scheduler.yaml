@@ -38,6 +38,8 @@ spec:
           - name: airflow-dags
             mountPath: /git
         env:
+          #- name: GOOGLE_APPLICATION_CREDENTIALS
+          #  value: /volumes/settings/google_app_creds.json
           - name: GIT_SYNC_REPO
             value: {{ .Values.airflow.dags.git.url }}
           - name: GIT_SYNC_BRANCH
@@ -77,7 +79,15 @@ spec:
           mountPath: /usr/local/airflow/dags
         - name: airflow-logs
           mountPath: /usr/local/airflow/logs
+        #- name: airflow-gcs-creds
+        #  mountPath: /volumes/settings
       volumes:
+      #- name: airflow-gcs-creds
+      #  secret:
+      #    secretName: invoice-processing-google-app-cred
+      #    items:
+      #    - key: google_app_creds.json
+      #      path: google_app_creds.json
       - name: airflow-logs
         persistentVolumeClaim:
           claimName: {{ if .Values.airflow.logs.persistence.existingClaim }}{{ .Values.airflow.logs.persistence.existingClaim }}{{- else }}{{ template "airflow.fullname" . }}-logs{{- end }}

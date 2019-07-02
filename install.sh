@@ -71,6 +71,25 @@ setup () {
 ##############################################################
 install_airflow () {
 
+  ##############################################################
+  # Create Secrets on the cluster
+  ##############################################################
+
+  # Google credential secrets as file
+  kubectl --namespace ${NAMESPACE} \
+    create secret generic invoice-processing-env \
+    --from-env-file=./install/secrets.env
+  kubectl --namespace ${NAMESPACE} \
+    create secret generic invoice-processing-google-app-cred \
+    --from-file=./install/google_app_creds.json
+  kubectl --namespace ${NAMESPACE} \
+    create secret generic invoice-processing-invoice-processing-ocr-creds \
+    --from-file=./install/invoice-processing-ocr-creds.json
+  kubectl --namespace ${NAMESPACE} \
+    create secret generic invoice-processing-ocr-compress \
+    --from-file=./install/ocr-compress.json
+
+
   # add a service account within a namespace for airflow
   # This will allow the worker nodes to spawn pods
   kubectl --namespace ${NAMESPACE} create sa airflow
@@ -115,23 +134,6 @@ install_airflow () {
     sleep 10
   done
 
-  ##############################################################
-  # Create Secrets on the cluster
-  ##############################################################
-
-  # Google credential secrets as file
-  kubectl --namespace ${NAMESPACE} \
-    create secret generic invoice-processing-env \
-    --from-env-file=./install/secrets.env
-  kubectl --namespace ${NAMESPACE} \
-    create secret generic invoice-processing-google-app-cred \
-    --from-file=./install/google_app_creds.json
-  kubectl --namespace ${NAMESPACE} \
-    create secret generic invoice-processing-invoice-processing-ocr-creds \
-    --from-file=./install/invoice-processing-ocr-creds.json
-  kubectl --namespace ${NAMESPACE} \
-    create secret generic invoice-processing-ocr-compress \
-    --from-file=./install/ocr-compress.json
 
   # Google credential secrets for pod ImagePullSecrets (still need to figure this out)
   DOCKER_REG="FALSE"
