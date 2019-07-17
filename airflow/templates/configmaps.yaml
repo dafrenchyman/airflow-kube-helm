@@ -170,8 +170,8 @@ data:
     {{- end }}
 
     [cli]
-    api_client = airflow.api.client.json_client
-    endpoint_url = https://airflow.crunchanalytics.cloud
+    api_client = airflow.api.client.local_client
+    endpoint_url = http://localhost:8080
 
     [api]
     auth_backend = airflow.api.auth.backend.default
