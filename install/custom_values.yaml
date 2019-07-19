@@ -30,6 +30,8 @@ airflow:
     persistence:
       enabled: false  # Persistence must be disabled when using git-sync
     git:
+      sshKeyFile:
+      knownHostsFile:
       # Play around with different repositories, branches and subpaths
       # subpath is the relative directory path in the git repository where
       # the dags can be found.

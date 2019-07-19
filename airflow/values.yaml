@@ -98,6 +98,8 @@ airflow:
     ##
     ## Configure Git repository to fetch DAGs
     git:
+      sshKeyFile:
+      knownHostsFile:
       url: https://github.com/dafrenchyman/kube
       branch: master
       subpath: .

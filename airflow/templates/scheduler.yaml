@@ -37,9 +37,17 @@ spec:
         volumeMounts:
           - name: airflow-dags
             mountPath: /git
+          {{- if or ( .Values.airflow.dags.git.sshKeyFile ) ( .Values.airflow.dags.git.knownHostsFile ) }}
+          - name: git
+            mountPath: /etc/git-secret
+          {{- end}}
         env:
           #- name: GOOGLE_APPLICATION_CREDENTIALS
           #  value: /volumes/settings/google_app_creds.json
+          {{- if .Values.airflow.dags.git.sshKeyFile }}
+          - name: GIT_SYNC_SSH
+            value: {{ .Values.airflow.dags.git.sshKeyFile }}
+          {{-end}}
           - name: GIT_SYNC_REPO
             value: {{ .Values.airflow.dags.git.url }}
           - name: GIT_SYNC_BRANCH
@@ -82,6 +90,22 @@ spec:
         #- name: airflow-gcs-creds
         #  mountPath: /volumes/settings
       volumes:
+      {{- if or ( .Values.airflow.dags.git.sshKeyFile ) ( .Values.airflow.dags.git.knownHostsFile ) }}
+      - name: git
+        secret:
+          secretName: git
+          items:
+          {{- if .Values.airflow.dags.git.sshKeyFile }}
+          - key: git_ssh_key
+            path: ssh
+            defaultMode: 288 # 0440
+          {{- end }}
+          {{- if .Values.airflow.dags.git.knownHostsFile }}
+          - key: known_hosts
+            path: known_hosts
+            defaultMode: 288 # 0440
+          {{- end }}
+      {{- end }}
       #- name: airflow-gcs-creds
       #  secret:
       #    secretName: invoice-processing-google-app-cred
