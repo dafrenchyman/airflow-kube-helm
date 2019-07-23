@@ -1,14 +1,12 @@
-# VERSION 1.10.1
+# VERSION 1.10.3
 # AUTHOR: Matthieu "Puckel_" Roisil
 # DESCRIPTION: Basic Airflow container
 # BUILD: docker build --rm -t puckel/docker-airflow .
 # SOURCE: https://github.com/puckel/docker-airflow
 
 # Disclaimer: I take no credit for this Dockerfile. It is a copy of the original
-# with a minor change to have git available. Please start from the original Dockerfile
-# for your own setup.
-
-# Further modified to include some extra libraries
+# with a minor change to have git and other libraries available.
+# Please start from the original Dockerfile for your own setup.
 
 FROM python:3.6-slim
 LABEL maintainer="Puckel_"
@@ -18,10 +16,11 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.10.2
-ARG AIRFLOW_HOME=/usr/local/airflow
+ARG AIRFLOW_VERSION=1.10.3
+ARG AIRFLOW_USER_HOME=/usr/local/airflow
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
+ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
 ENV AIRFLOW_GPL_UNIDECODE yes
 
 # Define en_US.
@@ -39,6 +38,7 @@ RUN set -ex \
         libssl-dev \
         libffi-dev \
         libpq-dev \
+        git \
     ' \
     && apt-get update -yqq \
     && apt-get upgrade -yqq \
@@ -53,23 +53,23 @@ RUN set -ex \
         netcat \
         locales \
         libpq5 \
-        git \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
+    && useradd -ms /bin/bash -d ${AIRFLOW_USER_HOME} airflow \
     && pip install -U pip setuptools wheel \
-    && pip install cryptography \
-    && pip install flask_bcrypt \
-    && pip install psycopg2-binary==2.7.4  \
     && pip install pytz \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
+    && pip install Flask==1.0.4 \
+    && pip install cryptography \
+    && pip install flask_bcrypt \
     && pip install 'slackclient>=1.0.0,<2.0.0' \
     && pip install 'google-cloud-core>=1.0,<2.0' \
     && pip install 'google-cloud-storage>=1.16,<2.0' \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
-    && pip install 'redis==3.2.1' \
+    && pip install 'redis==3.2' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get autoremove -yqq --purge \
@@ -83,8 +83,8 @@ RUN set -ex \
         /usr/share/doc-base
 
 COPY script/entrypoint.sh /entrypoint.sh
-COPY config/airflow.cfg ${AIRFLOW_HOME}/usr/local/airflow.cfg
+COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
-WORKDIR ${AIRFLOW_HOME}
+WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"]

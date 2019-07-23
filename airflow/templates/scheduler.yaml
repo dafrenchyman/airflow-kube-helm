@@ -71,10 +71,14 @@ spec:
           {{- if .Values.airflow.dags.git.sshKeyFile }}
           - name: GIT_SYNC_SSH
             value: "true"
+          - name: GIT_SSH_KEY_FILE
+            value: /etc/git-secret/ssh
           {{- end }}
           {{- if .Values.airflow.dags.git.knownHostsFile }}
           - name: GIT_KNOWN_HOSTS
             value: "true"
+          - name: GIT_SSH_KNOWN_HOSTS_FILE
+            value: /etc/git-secret/known_hosts
           {{- end }}
       {{- end }}
       - name: scheduler
@@ -97,16 +101,14 @@ spec:
           mountPath: /usr/local/airflow/dags
         - name: airflow-logs
           mountPath: /usr/local/airflow/logs
-        #- name: airflow-gcs-creds
-        #  mountPath: /volumes/settings
       volumes:
       {{- if or ( .Values.airflow.dags.git.sshKeyFile ) ( .Values.airflow.dags.git.knownHostsFile ) }}
       - name: git
         secret:
-          secretName: git
+          secretName: {{ template "airflow.fullname" . }}-git
           items:
           {{- if .Values.airflow.dags.git.sshKeyFile }}
-          - key: git_ssh_key
+          - key: gitSshKey
             path: ssh
             defaultMode: 288 # 0400
           {{- end }}

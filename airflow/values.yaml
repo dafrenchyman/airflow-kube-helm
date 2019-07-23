@@ -25,14 +25,14 @@ airflow:
   image:
     ##
     ## docker-airflow image
-    repository: airflow
+    repository: dafrenchyman/docker-airflow
     ##
     ## image tag
-    tag: latest
+    tag: 1.10.3
     ##
     ## Image pull policy
     ## values: Always or IfNotPresent
-    pull_policy: IfNotPresent
+    pull_policy: Always
   ##
   ## Custom airflow configuration environment variables
   ## Use this to override any airflow setting settings defining environment variables in the

@@ -97,6 +97,9 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
+  {{- if .Values.airflow.dags.git.knownHostsFile }}
+  known_hosts: {{ .Files.Get (printf "%s" .Values.airflow.dags.git.knownHostsFile) | quote }}
+  {{- end }}
   airflow.cfg: |
     [core]
     airflow_home = /usr/local/airflow
@@ -122,6 +125,8 @@ data:
     worker_container_tag = {{ .Values.airflow.image.tag }}
     worker_container_image_pull_policy = {{ .Values.airflow.image.pull_policy }}
     worker_dags_folder = /usr/local/airflow/dags
+
+    # If True (default), worker pods will be deleted upon termination
     delete_worker_pods = True
     {{- if .Values.airflow.dags.persistence.enabled }}
     {{- if .Values.airflow.dags.persistence.existingClaim }}
@@ -150,8 +155,15 @@ data:
 
     # for cloning dags from git repositories into volumes: https://github.com/kubernetes/git-sync
     git_sync_container_repository = k8s.gcr.io/git-sync
-    git_sync_container_tag = v3.0.1
+    git_sync_container_tag = v3.1.1
     git_sync_init_container_name = git-sync-clone
+
+    {{- if .Values.airflow.dags.git.sshKeyFile }}
+    git_ssh_key_secret_name = {{ template "airflow.fullname" . }}-git
+    {{- end }}
+    {{- if .Values.airflow.dags.git.knownHostsFile }}
+    git_ssh_known_hosts_configmap_name = {{ template "airflow.fullname" . }}-config
+    {{- end }}
 
     [kubernetes_node_selectors]
     # the key-value pairs to be given to worker pods.

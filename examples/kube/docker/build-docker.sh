@@ -16,7 +16,7 @@ git clone https://github.com/puckel/docker-airflow.git
 cp $DIR/Dockerfile docker-airflow/Dockerfile
 cd docker-airflow
 
-docker build --no-cache --build-arg PYTHON_DEPS="Flask-OAuthlib" \
+docker build --no-cache --build-arg PYTHON_DEPS="" \
  --build-arg AIRFLOW_DEPS="kubernetes,slack" \
  --tag=${IMAGE}:${TAG} .
 
