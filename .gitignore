@@ -9,3 +9,4 @@ secrets_old.json
 google_app_creds.json
 invoice-processing-ocr-creds.json
 ocr-compress.json
+/config/

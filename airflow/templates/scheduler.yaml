@@ -9,7 +9,7 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   replicas: 1
-  serviceAccountName: {{ template "airflow.fullname" . }}-cluster-access
+  #serviceAccountName: {{ template "airflow.fullname" . }}-cluster-access
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -24,6 +24,7 @@ spec:
         app: {{ template "airflow.name" . }}-scheduler
         release: {{ .Release.Name }}
     spec:
+      serviceAccountName: {{ template "airflow.fullname" . }}-cluster-access
       securityContext:
         fsGroup: 1000
       restartPolicy: Always
@@ -37,7 +38,7 @@ spec:
         securityContext:
           runAsUser: 65533 # git-sync user
         volumeMounts:
-          - name: airflow-dags
+          - name: {{ template "airflow.fullname" . }}-dags
             mountPath: /git
           {{- if or ( .Values.airflow.dags.git.sshKeyFile ) ( .Values.airflow.dags.git.knownHostsFile ) }}
           - name: git
@@ -97,7 +98,7 @@ spec:
         - name: airflow-config
           mountPath: /usr/local/airflow/airflow.cfg
           subPath: airflow.cfg
-        - name: airflow-dags
+        - name: {{ template "airflow.fullname" . }}-dags
           mountPath: /usr/local/airflow/dags
         - name: airflow-logs
           mountPath: /usr/local/airflow/logs
@@ -110,12 +111,14 @@ spec:
           {{- if .Values.airflow.dags.git.sshKeyFile }}
           - key: gitSshKey
             path: ssh
-            defaultMode: 288 # 0400
+            #defaultMode: 288 # 0400
+            mode: 288 # 0400
           {{- end }}
           {{- if .Values.airflow.dags.git.knownHostsFile }}
           - key: known_hosts
             path: known_hosts
-            defaultMode: 288 # 0400
+            #defaultMode: 288 # 0400
+            mode: 288 # 0400
           {{- end }}
       {{- end }}
       #- name: airflow-gcs-creds

@@ -4,11 +4,11 @@ metadata:
   name: nfs-airflow-logs
 spec:
   capacity:
-    storage: 200Gi
+    storage: {{ .Values.airflow.logs.persistence.size | quote }}
   accessModes:
     - ReadWriteMany
   nfs:
-    server: NFS_SERVER_POD_IP_ADDRESS
+    server: nfs-server.{{ .Release.Namespace }}.svc.cluster.local
     path: "/"
 
 ---
@@ -22,4 +22,4 @@ spec:
   storageClassName: ""
   resources:
     requests:
-      storage: 200Gi
+      storage: {{ .Values.airflow.logs.persistence.size | quote }}
