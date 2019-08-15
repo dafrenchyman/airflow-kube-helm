@@ -11,6 +11,7 @@ airflow:
   ## Generate fernet_key with:
   ##    python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)"
   ## fernet_key: ABCDABCDABCDABCDABCDABCDABCDABCDABCDABCD
+  # Don't use this fernet key in production!
   fernet_key: "wEyDkTXKeSZNfNMhwrPMjSPY-E4UJEx8GtN5QV3nTkM="
   service:
     type: NodePort
@@ -100,7 +101,10 @@ airflow:
     git:
       sshKeyFile:
       knownHostsFile:
-      url: https://github.com/dafrenchyman/kube
+      # Private Repo:
+      url: git@github.com:your/repo.git
+      # Public Repo:
+      #url: https://github.com/your/repo
       branch: master
       subpath: .
       ##
@@ -111,9 +115,9 @@ airflow:
     enabled: false
     # Initial rbac users can be defined here as a list of maps.
     users:
-    - firstname: "AI"
-      lastname: "Tiger"
-      email: "ai.of.the.tiger@appfolio.com"
+    - firstname: "First"
+      lastname: "Last"
+      email: "your@email.com"
       username: "admin"
       role: "Admin"
       password: "airflow123"
