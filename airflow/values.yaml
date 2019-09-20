@@ -7,6 +7,14 @@
 ## common settings and setting for the webserver
 airflow:
   ##
+  ## node_selector labels where you want the pods to run
+  service_node_selector:
+    key: "airflow_node"  # Leave empty if you don't want to use
+    value: "true"
+  worker_node_selector:
+    key: "airflow_worker"  # Leave empty if you don't want to use
+    value: "true"
+  ##
   ## You will need to define your fernet key:
   ## Generate fernet_key with:
   ##    python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)"
@@ -47,7 +55,6 @@ airflow:
 
   logs:
     persistence:
-      accessMode: ReadWriteOnce
       ##
       ## Persistent Volume Storage Class
       ## If defined, storageClassName: <storageClass>
@@ -56,10 +63,6 @@ airflow:
       ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
       ##   GKE, AWS & OpenStack)
       # storageClass: default
-      ##
-      ## Existing claim to use
-      existingClaim:
-      existingClaimSubPath:
       ##
       ## Persistant storage size request
       size: 1Gi
@@ -101,12 +104,9 @@ airflow:
     git:
       sshKeyFile:
       knownHostsFile:
-      # Private Repo:
-      url: git@github.com:your/repo.git
-      # Public Repo:
-      #url: https://github.com/your/repo
+      url: https://github.com/apache/airflow
       branch: master
-      subpath: .
+      subpath: dags
       ##
       ## Number of seconds to wait between git synchronizations
       wait: 60
@@ -239,7 +239,7 @@ postgresql:
   ## Set to false if bringing your own PostgreSQL.
   enabled: true
   # Force it to run on an airflow only node
-  nodeSelector: {"airflow": "true"}
+  nodeSelector: {"airflow_node": "true"}
   # Postgres configuration values
   postgresConfig: {"max_connections": "300", "sharedBuffers": "500MB"}
 

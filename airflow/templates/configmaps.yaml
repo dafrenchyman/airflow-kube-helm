@@ -169,14 +169,15 @@ data:
     # the key-value pairs to be given to worker pods.
     # the worker pods will be scheduled to the nodes of the specified key-value pairs.
     # should be supplied in the format: key = value
-    airflow = false
+    {{- if .Values.airflow.worker_node_selector.key }}
+    {{ .Values.airflow.worker_node_selector.key }} = {{ .Values.airflow.worker_node_selector.key }}
+    {{- end }}
 
     [kubernetes_secrets]
     AIRFLOW__CORE__SQL_ALCHEMY_CONN = {{ template "airflow.fullname" $ }}-env=AIRFLOW__CORE__SQL_ALCHEMY_CONN
     AIRFLOW__CORE__FERNET_KEY = {{ template "airflow.fullname" $ }}-env=FERNET_KEY
     AIRFLOW_HOME = {{ template "airflow.fullname" $ }}-env=AIRFLOW_HOME
     FERNET_KEY = {{ template "airflow.fullname" $ }}-env=FERNET_KEY
-    # GOOGLE_APPLICATION_CREDENTIAL_STRING = invoice-processing-google-app-cred=google_app_creds.json
     {{- range $setting, $option := .Values.airflow.config }}
     {{ $setting }} = {{ template "airflow.fullname" $ }}-env={{ $setting }}
     {{- end }}

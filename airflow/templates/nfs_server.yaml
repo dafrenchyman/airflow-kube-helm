@@ -12,8 +12,10 @@ spec:
       labels:
         role: nfs-server
     spec:
+      {{- if .Values.airflow.service_node_selector.key }}
       nodeSelector:
-        airflow: "true"
+        {{ .Values.airflow.service_node_selector.key }}: {{ .Values.airflow.service_node_selector.value | quote }}
+      {{- end }}
       containers:
       - name: nfs-server
         image: k8s.gcr.io/volume-nfs:0.8

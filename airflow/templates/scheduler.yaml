@@ -28,8 +28,10 @@ spec:
       securityContext:
         fsGroup: 1000
       restartPolicy: Always
+      {{- if .Values.airflow.service_node_selector.key }}
       nodeSelector:
-        airflow: "true"
+        {{ .Values.airflow.service_node_selector.key }}: {{ .Values.airflow.service_node_selector.value | quote }}
+      {{- end }}
       containers:
       {{- if not .Values.airflow.dags.persistence.enabled }}
       - name: git-sync
@@ -121,15 +123,9 @@ spec:
             mode: 288 # 0400
           {{- end }}
       {{- end }}
-      #- name: airflow-gcs-creds
-      #  secret:
-      #    secretName: invoice-processing-google-app-cred
-      #    items:
-      #    - key: google_app_creds.json
-      #      path: google_app_creds.json
       - name: airflow-logs
         persistentVolumeClaim:
-          claimName: {{ if .Values.airflow.logs.persistence.existingClaim }}{{ .Values.airflow.logs.persistence.existingClaim }}{{- else }}{{ template "airflow.fullname" . }}-logs{{- end }}
+          claimName: {{ template "airflow.fullname" . }}-logs
       - name: airflow-config
         configMap:
           name: {{ template "airflow.fullname" . }}-config
